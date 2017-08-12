@@ -3,7 +3,7 @@ import { NavController, NavParams } from 'ionic-angular';
 import { AddListPage } from '../add-list/add-list'
 import { ItemDetailPage } from '../item-detail/item-detail'
 import { ModalController } from 'ionic-angular';
-
+import { DataProvider } from '../../providers/data/data'
 /**
  * Generated class for the ItemListPage page.
  *
@@ -20,8 +20,17 @@ export class ItemListPage {
 itemList = [{"title":"Learn Ionic","description":"Learn Ionic slide 12345","completed":false},
 {"title":"Do FreeCodeCamp","description":"Until front end module","completed":false},
 {"title":"Do WOD","description":"do all WOD 1 - 15","completed":false}]
-  constructor(public navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController) {
-  }
+  constructor(public navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController,
+  	public dataService: DataProvider) {
+  	this.dataService.getData().then((todos)=>
+  	{
+  		if (todos){
+  		this.itemList = JSON.parse(todos);
+  	}
+  	}
+  	)
+
+  	  }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ItemListPage');
@@ -29,8 +38,9 @@ itemList = [{"title":"Learn Ionic","description":"Learn Ionic slide 12345","comp
   buttonTapped(){
   	let modal = this.modalCtrl.create(AddListPage);
   	modal.onDidDismiss(data => {
-     console.log(data);
-     this.itemList.push(data)
+     
+     this.itemList.push(data);
+     this.dataService.saveData(this.itemList);
    });
     modal.present();
   }
