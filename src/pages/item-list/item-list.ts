@@ -3,7 +3,8 @@ import { NavController, NavParams } from 'ionic-angular';
 import { AddListPage } from '../add-list/add-list'
 import { ItemDetailPage } from '../item-detail/item-detail'
 import { ModalController } from 'ionic-angular';
-import { DataProvider } from '../../providers/data/data'
+import { DataProvider } from '../../providers/data/data';
+import { AlertController } from 'ionic-angular';
 /**
  * Generated class for the ItemListPage page.
  *
@@ -17,11 +18,9 @@ import { DataProvider } from '../../providers/data/data'
 })
 export class ItemListPage {
 
-itemList = [{"title":"Learn Ionic","description":"Learn Ionic slide 12345","completed":false},
-{"title":"Do FreeCodeCamp","description":"Until front end module","completed":false},
-{"title":"Do WOD","description":"do all WOD 1 - 15","completed":false}]
+itemList = []
   constructor(public navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController,
-  	public dataService: DataProvider) {
+  	public dataService: DataProvider,public alertCtrl: AlertController) {
   	this.dataService.getData().then((todos)=>
   	{
   		if (todos){
@@ -52,6 +51,29 @@ itemList = [{"title":"Learn Ionic","description":"Learn Ionic slide 12345","comp
   }
 
   delete(item){
- 	this.itemList.splice(this.itemList.indexOf(item),1)
+    let confirm = this.alertCtrl.create({
+      title: 'Delete item?',
+      message: 'Are you sure you want to delete?',
+      buttons: [
+        {
+          text: 'Nope',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Delete it!',
+          handler: () => {
+            this.dataService.deleteData(item,(todos)=>{
+              this.itemList= todos
+            })
+          }
+        }
+      ]
+    });
+    confirm.present();
   }
-}
+ 	//this.itemList.splice(this.itemList.indexOf(item),1)
+  }
+
+

@@ -22,4 +22,23 @@ export class DataProvider {
  	let newData=JSON.stringify(	data)
  	this.storage.set('todos',newData)
  }
+ deleteData(data,resolve){
+
+ 	this.storage.get('todos').then((todos)=>
+  	{
+  		if (todos){
+  			var toDoArray = JSON.parse(todos)
+  			console.log(toDoArray)
+  			console.log(data)
+  			toDoArray.splice(toDoArray.indexOf(data),1)
+  			console.log(toDoArray)
+  			var arrayData = JSON.stringify(toDoArray)
+
+  			this.storage.set('todos',arrayData)
+  			resolve(JSON.parse(arrayData))
+
+  	}
+  	}
+  	)
+}
 }
